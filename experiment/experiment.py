@@ -13,7 +13,7 @@ class Experiment:
     def __init__(self, name, model,  tracking_uri="http://localhost:5000", experiment_id=None):
         self.name = name #Must be unique
         self.model = model
-        
+         
         self.tracking_uri = tracking_uri
         
         if not experiment_id:
