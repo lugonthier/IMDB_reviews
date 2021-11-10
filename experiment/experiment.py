@@ -6,7 +6,8 @@ from sklearn.model_selection import cross_validate
 
 class Experiment:
     """
-    
+    TODO : - handle exception (delete experiment if not processed entirely)
+            
     """
 
     def __init__(self, name, model,  tracking_uri="http://localhost:5000", experiment_id=None):
