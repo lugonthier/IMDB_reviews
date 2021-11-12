@@ -10,7 +10,27 @@ from experiment import Experiment
 
 
 
+def launch_experiment(exp, mode, X, y, test_size=0.2):
+    
+    if mode == 1:
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
+            metrics = {accuracy_score.__name__:accuracy_score, f1_score.__name__:f1_score, roc_auc_score.__name__:roc_auc_score}
+            exp.run_simple_experimentation(X_train, y_train, X_test, y_test, "test_",  metrics)
+
+    elif mode == 2:
+        metrics =  {accuracy_score.__name__:make_scorer(accuracy_score), f1_score.__name__:make_scorer(f1_score),
+        roc_auc_score.__name__:make_scorer((roc_auc_score))}
+
+        exp.run_cross_valid_experimentation(X, y, scorers=metrics, return_train_score=True)
+
+def training_size_evaluation(exp, df, mode, range_step):
+
+    for size in range(range_step, len(df), range_step):
+        X = df.review.to_numpy()[:size]
+        y = df.sentiment.apply(lambda x: 0 if (x == 'negative') else 1).to_numpy()[:size]
+
+        launch_experiment(exp, mode, X, y)
 
 def main():
     if len(sys.argv) < 5:
@@ -20,7 +40,7 @@ def main():
         \n\t new_experiment : 0 => experiment exist, 1: new experiment\
         \n\t experiment_name (if new_experiment==1)\
         \n\t experiment_id (if new_experiment==0)\
-        \n\t range_step : step to iterate over dataset size"
+        \n\t evaluation: 1 => training size, 2 => dimensionality"
         print(usage)
         return
 
@@ -33,8 +53,21 @@ def main():
     else:
         experiment_id = int(sys.argv[4])
 
-    range_step = int(sys.argv[5])
+    evaluation = int(sys.argv[5])
     
+    if evaluation == 1: #Ask for training step
+        isint = False
+        while not isint:
+            try:
+                range_step = int(input("Please, insert the step : \n\n"))
+                isint = True
+            except:
+                print("Please give an int as step.")
+            
+    elif evaluation == 2:
+        print("evaluate dimensionality")
+        #TODO
+        
 
     models = {1:LogisticRegression()}
     if (model_selected > 0) and (model_selected < 7):
@@ -43,34 +76,17 @@ def main():
     df = pd.read_csv('/Users/gonthierlucas/Desktop/DS_project/IMDB_reviews/data/IMDB_Dataset.csv')
 
     if new_experiment == 1:
-            exp = Experiment( experiment_name=experiment_name)
+            exp = Experiment(experiment_name=experiment_name)
             
     else:
-        exp = Experiment( experiment_id=experiment_id)
+        exp = Experiment(experiment_id=experiment_id)
 
-    for size in range(range_step, len(df), range_step):
+    
+    cv = CountVectorizer()
+    pipe = Pipeline(steps=[('vect', cv), ('model', model)])
+    exp.model = pipe
 
-        X = df.review.to_numpy()[:size]
-        y = df.sentiment.apply(lambda x: 0 if (x == 'negative') else 1).to_numpy()[:size]
-        X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
-
-        cv = CountVectorizer()
-
-        pipe = Pipeline(steps=[('vect', cv), ('model', model)])
-
-        exp.model = pipe
-        
-
-        if mode == 1:
-            metrics = {accuracy_score.__name__:accuracy_score, f1_score.__name__:f1_score, roc_auc_score.__name__:roc_auc_score}
-            exp.run_simple_experimentation(X_train, y_train, X_test, y_test, "test_",  metrics)
-
-        elif mode == 2:
-            metrics =  {accuracy_score.__name__:make_scorer(accuracy_score), f1_score.__name__:make_scorer(f1_score),
-            roc_auc_score.__name__:make_scorer((roc_auc_score))}
-
-            exp.run_cross_valid_experimentation(X_train, y_train, scorers=metrics, return_train_score=True)
-
+    training_size_evaluation(exp, df, mode, range_step)
 
     
 if __name__=="__main__":
