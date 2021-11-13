@@ -1,7 +1,7 @@
 .vscode
 .DS_Store
 
-test.ipynb
+test.py
 #data
 mlruns
 data

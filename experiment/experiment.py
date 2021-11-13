@@ -62,12 +62,7 @@ class Experiment:
             
             self.model.fit(X_train, y_train)
             
-            #y_pred = self.model.predict(X_test)
-
-            #params = self.model[-1].get_params(deep=False)
-
-            #for param, value in params.items():
-            #    mlflow.log_param(param, value)
+            
             mlflow.log_param("training size", len(X_train))
             mlflow.sklearn.eval_and_log_metrics(self.model, X_test, y_test, prefix=prefix)   
             #for key, metric in metrics.items():  
