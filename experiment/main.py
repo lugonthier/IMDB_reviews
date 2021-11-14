@@ -1,46 +1,32 @@
 import pandas as pd
 import sys
-from sklearn.model_selection import train_test_split
+import os
+
+#To add parent folder access
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
+
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, make_scorer
+
+from preprocessing.text_preprocessor import TextPreprocessor
 from experiment import Experiment
+from experiment_type import training_size_evaluation
 
 
 
-
-def launch_experiment(exp, mode, X, y, test_size=0.2):
-    
-    if mode == 1:
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
-
-            metrics = {accuracy_score.__name__:accuracy_score, f1_score.__name__:f1_score, roc_auc_score.__name__:roc_auc_score}
-            exp.run_simple_experimentation(X_train, y_train, X_test, y_test, "test_",  metrics)
-
-    elif mode == 2:
-        metrics =  {accuracy_score.__name__:make_scorer(accuracy_score), f1_score.__name__:make_scorer(f1_score),
-        roc_auc_score.__name__:make_scorer((roc_auc_score))}
-
-        exp.run_cross_valid_experimentation(X, y, scorers=metrics, return_train_score=True)
-
-def training_size_evaluation(exp, df, mode, range_step):
-
-    for size in range(range_step, len(df), range_step):
-        X = df.review.to_numpy()[:size]
-        y = df.sentiment.apply(lambda x: 0 if (x == 'negative') else 1).to_numpy()[:size]
-
-        launch_experiment(exp, mode, X, y)
 
 def main():
     if len(sys.argv) < 5:
-        usage = "\n Usage: python classifieur.py method nb_train nb_test lambda bruit corruption don_ab\
+        usage = "\n Usage: python main.py  mode  model_selected  new_experiment  experiment_name/experiment_id  evaluation\
         \n\n\t mode : 1 => simple experiment, 2 => cross validation\
         \n\t model_seleted : 1 => Logistic Regression, 2 => ... until 6, 7 => Performe all model ?\
         \n\t new_experiment : 0 => experiment exist, 1: new experiment\
         \n\t experiment_name (if new_experiment==1)\
         \n\t experiment_id (if new_experiment==0)\
-        \n\t evaluation: 1 => training size, 2 => dimensionality"
+        \n\t evaluation: 0=> normal, 1 => training size, 2 => dimensionality"
         print(usage)
         return
 
@@ -73,17 +59,22 @@ def main():
     if (model_selected > 0) and (model_selected < 7):
         model = models[model_selected]
     
+
+
+
+
     df = pd.read_csv('/Users/gonthierlucas/Desktop/DS_project/IMDB_reviews/data/IMDB_Dataset.csv')
 
     if new_experiment == 1:
-            exp = Experiment(experiment_name=experiment_name)
-            
+            exp = Experiment(experiment_name=experiment_name) 
     else:
         exp = Experiment(experiment_id=experiment_id)
 
-    
+
+    text_prep = TextPreprocessor(normalization=1)
     cv = CountVectorizer()
-    pipe = Pipeline(steps=[('vect', cv), ('model', model)])
+
+    pipe = Pipeline(steps=[('preprocessor',text_prep), ('vect', cv), ('model', model)])
     exp.model = pipe
 
     training_size_evaluation(exp, df, mode, range_step)

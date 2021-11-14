@@ -4,7 +4,7 @@ import pandas as pd
 
 from typing import List, Union
 
-def transform_to_ndarray( data):
+def transform_to_ndarray(data):
         
     if type(data) == List:
         return np.array(data, dtype=object)
