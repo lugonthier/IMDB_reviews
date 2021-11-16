@@ -1,16 +1,29 @@
-
+import pandas as pd
 import numpy as np
 import mlflow
+
+from typing import Dict, List, Union
 from sklearn.model_selection import cross_validate
 
 
 class Experiment:
-    """
-    TODO : - handle exception (delete experiment if not processed entirely)
-            
+    """Class to track machine learning experiment. Based on the open source project mlflow.
+
+    Args:
+        name : str
+            Is the experiment name.
+
+        model : sklearn.pipeline.Pipeline
+            The whole pipeline from preprocessing to machine learning model.
+
+        tracking_uri : str
+            The uri used to store experiment results.
+        
+        experiment_id : int
+            The (unique) experiment id.
     """
 
-    def __init__(self, model=None, experiment_name="",  tracking_uri="http://localhost:5000", experiment_id=None):
+    def __init__(self, model=None, experiment_name:str = "",  tracking_uri:str = "http://localhost:5000", experiment_id: int = None):
         self.name = experiment_name #Must be unique
         self.model = model #whole pipeline to prevent data leakage during cross validation 
         self.tracking_uri = tracking_uri
@@ -20,14 +33,20 @@ class Experiment:
             self.experiment_id = mlflow.create_experiment(name=self.name)
             
         else:
-            
             self.experiment_id = experiment_id
             
 
     
+    def run_cross_valid_experimentation(self, X:Union[List, np.ndarray, pd.Series], y:Union[List, np.ndarray, pd.Series], scorers:Dict, cv:int=5, return_train_score:bool=False) -> None:
+        """This method is used to run a cross validation. Model parameters and model scores are saved.
 
-    def run_cross_valid_experimentation(self, X, y, scorers, cv=5, return_train_score=False):
-        
+        Args:
+            X (Union[List, np.ndarray, pd.Series]): Data to use in cross validation.
+            y (Union[List, np.ndarray, pd.Series]): Target corresponding to X.
+            scorers (Dict): sklearn scorers.
+            cv (int, optional): number of folder. Defaults to 5.
+            return_train_score (bool, optional): boolean to decided If return train score or not. Defaults to False.
+        """
         
         mlflow.set_tracking_uri(self.tracking_uri)
         
@@ -48,12 +67,18 @@ class Experiment:
                 mlflow.log_metric(metric + '_std', np.std(score))
         
             
-
         
-    def run_simple_experimentation(self, X_train, y_train,  X_test, y_test, prefix="valid", metrics=None):
-        """
-        TODO : - TEST if cross_val == False then X_test and y_test not None
-                - If EXCEPTION delete experiment
+    def run_simple_experimentation(self, X_train:Union[List, np.ndarray, pd.Series], y_train:Union[List, np.ndarray, pd.Series],
+            X_test:Union[List, np.ndarray, pd.Series], y_test:Union[List, np.ndarray, pd.Series], prefix:str="valid", metrics:Dict=None) -> None:
+        """This method is used to run a simple validation. Model parameters and model scores are saved.
+
+        Args:
+            X_train (Union[List, np.ndarray, pd.Series]): Data used to train the model.
+            y_train (Union[List, np.ndarray, pd.Series]): Target corresponding to X_train.
+            X_test (Union[List, np.ndarray, pd.Series]): Data used to evaluate the model.
+            y_test (Union[List, np.ndarray, pd.Series]): Target corresponding to X_test.
+            prefix (str, optional): to prefix metrics name. Defaults to "valid".
+            metrics (Dict, optional): sklearn metrics. Defaults to None.
         """
 
         mlflow.set_tracking_uri(self.tracking_uri)

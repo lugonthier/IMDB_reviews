@@ -1,4 +1,3 @@
-
 import pandas as pd
 import sys
 import os
@@ -19,13 +18,12 @@ from sklearn.pipeline import Pipeline
 from preprocessing.text_preprocessor import TextPreprocessor
 from preprocessing.vectorizer import select_vectorizer
 from experiment.experiment import Experiment
-from experiment.experiment_type import training_size_evaluation, dimensionality_size_evaluation, launch_experiment
-
-
+from experiment.experiment_type import dimensionality_size_evaluation, training_size_evaluation
 
 
 def main():
-    if len(sys.argv) < 9:
+
+    if len(sys.argv) < 7:
         usage = "\n Usage: python main.py  mode  model_selected  new_experiment  experiment_name/experiment_id  evaluation\
         \n\n\t mode : 1 => simple experiment, 2 => cross validation\
         \
@@ -33,14 +31,12 @@ def main():
          \n\t normalization : 0 => No, 1 => WordNetLemmatizer, 2 => PorterStemmer \
         \
         \n\t vectorizer : 1 => CountVectorizer, 2 => TfidfVectorizer\
-        \n\t max_features : integer\
-        \
-        \n\t model_seleted : 1 => Logistic Regression, 2 => ... until 6, 7 => Performe all model ?\
         \
         \n\t new_experiment : 0 => experiment exist, 1: new experiment\
         \n\t experiment_name (if new_experiment==1)\
         \n\t experiment_id (if new_experiment==0)\
-        \n\t evaluation: 0 => normal, 1 => training size, 2 => dimensionality\
+        \n\t evaluation : 1 => training size, 2 => dimensionality size\
+        \n\t range_step integer\
         "
         print(usage)
         return
@@ -50,68 +46,48 @@ def main():
     normalization = int(sys.argv[3])
 
     vectorizer = int(sys.argv[4])
-    max_features = int(sys.argv[5])
-
-    model_selected = int(sys.argv[6])
-
-    new_experiment = int(sys.argv[7]) # 0:no, 1:yes
+    new_experiment = int(sys.argv[5])
 
     if(new_experiment == 1):
-        experiment_name = str(sys.argv[8])
+        experiment_name = str(sys.argv[6])
     else:
-        experiment_id = int(sys.argv[8])
+        experiment_id = int(sys.argv[6])
 
-    evaluation = int(sys.argv[9])
-    
-    if evaluation in [1, 2]: #Ask for training step
-        isint = False
-        while not isint:
-            try:
-                range_step = int(input("Please, insert the step : \n\n"))
-                isint = True
-            except:
-                print("Please give an int as step.")
-            
-    
-        
+    evaluation = int(sys.argv[7])
+    range_step = int(sys.argv[8])
 
     all_models = {1:LogisticRegression(), 2:DecisionTreeClassifier(), 3:MultinomialNB(),  5:LinearSVC(), 6:MLPClassifier()}
-    models = []
-    if (model_selected > 0) and (model_selected < 7):
-        models.append(all_models[model_selected])
-    else:
-        for key, model in all_models.items():
-            models.append(model)
+    
+
+    df_train = pd.read_csv('/Users/gonthierlucas/Desktop/DS_project/IMDB_reviews/data/IMDB_train.csv')
+    df_valid = pd.read_csv('/Users/gonthierlucas/Desktop/DS_project/IMDB_reviews/data/IMDB_valid.csv')
+
+    X_train = df_train.review.to_numpy()
+    y_train = df_train.sentiment.apply(lambda x: 0 if x=="negative" else 1).to_numpy()
+
+    X_valid = df_valid.review.to_numpy()
+    y_valid = df_valid.sentiment.apply(lambda x: 0 if x=="negative" else 1).to_numpy()
 
 
-
-
-    df = pd.read_csv('/Users/gonthierlucas/Desktop/DS_project/IMDB_reviews/data/IMDB_Dataset.csv')
+    
 
     if new_experiment == 1:
             exp = Experiment(experiment_name=experiment_name) 
     else:
         exp = Experiment(experiment_id=experiment_id)
 
-
     text_prep = TextPreprocessor(stopwords=stopwords, normalization=normalization)
     vect = select_vectorizer(vectorizer)
 
-    for model in models:
+    for key, model in all_models.items():
         pipe = Pipeline(steps=[('preprocessor',text_prep), ('vect', vect), ('model', model)])
         exp.model = pipe
 
         if evaluation == 1:
-            training_size_evaluation(exp, df, mode, range_step)
-
+            training_size_evaluation(exp, mode, range_step, X_train, y_train, X_valid, y_valid)
         elif evaluation == 2:
-            dimensionality_size_evaluation(exp, df, mode, range_step)
+            dimensionality_size_evaluation(exp, mode, range_step, X_train, y_train, X_valid, y_valid)
 
-        else:
-            X = df.review.to_numpy()
-            y = df.sentiment.apply(lambda x: 0 if (x == 'negative') else 1).to_numpy()
-            launch_experiment(exp, mode, X, y)
 
-    
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
