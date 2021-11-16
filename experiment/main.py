@@ -86,7 +86,7 @@ def main():
 
 
 
-    df = pd.read_csv('/Users/gonthierlucas/Desktop/DS_project/IMDB_reviews/data/IMDB_Dataset.csv')
+    df = pd.read_csv('data/IMDB_Dataset.csv')
 
     if new_experiment == 1:
             exp = Experiment(experiment_name=experiment_name) 
