@@ -29,8 +29,13 @@ def training_size_evaluation(exp, df, mode, range_step):
 
 def dimensionality_size_evaluation(exp, df, mode, range_step):
 
-    max_dim = 0
+    max_dim = 102000 #After investigation, maximum possible dimension is 101895
     
-    for size in range(range_step, max_dim, range_step):
+    for dim in range(range_step, max_dim, range_step):
 
-        pass
+        X = df.review.to_numpy()
+        y = df.sentiment.apply(lambda x: 0 if (x == 'negative') else 1).to_numpy()
+
+        exp.model[1].max_features = dim
+
+        launch_experiment(exp, mode, X, y)

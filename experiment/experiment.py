@@ -41,13 +41,13 @@ class Experiment:
             for param, value in params.items():
                 mlflow.log_param(param, value)
             
-            mlflow.log_param("training size", len(X)/cv)
-
+            mlflow.log_param("training size", (len(X)*(cv-1))/cv)
+            
             for metric, score in scores.items():  
                 mlflow.log_metric(metric + '_mean', np.mean(score))
                 mlflow.log_metric(metric + '_std', np.std(score))
         
-        
+            
 
         
     def run_simple_experimentation(self, X_train, y_train,  X_test, y_test, prefix="valid", metrics=None):
