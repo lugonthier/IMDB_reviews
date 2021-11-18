@@ -4,7 +4,7 @@ import mlflow
 
 from typing import Dict, List, Union
 from sklearn.model_selection import cross_validate
-
+from sklearn.metrics import accuracy_score
 
 class Experiment:
     """Class to track machine learning experiment. Based on the open source project mlflow.
@@ -37,7 +37,7 @@ class Experiment:
             
 
     
-    def run_cross_valid_experimentation(self, X:Union[List, np.ndarray, pd.Series], y:Union[List, np.ndarray, pd.Series], scorers:Dict, cv:int=5, return_train_score:bool=False) -> None:
+    def run_cross_valid_experimentation(self, X:Union[List, np.ndarray, pd.Series], y:Union[List, np.ndarray, pd.Series], train:np.ndarray, test:np.ndarray, scorers:Dict, return_train_score:bool=False) -> None:
         """This method is used to run a cross validation. Model parameters and model scores are saved.
 
         Args:
@@ -51,8 +51,14 @@ class Experiment:
         mlflow.set_tracking_uri(self.tracking_uri)
         
         with mlflow.start_run(experiment_id=self.experiment_id) as run:
-            scores = cross_validate(self.model, X=X, y=y, scoring=scorers, cv=cv, return_train_score=return_train_score)
-            
+            #scores = cross_validate(self.model, X=X, y=y, scoring=scorers, cv=cv, return_train_score=return_train_score)
+            scores = {'test_accuracy':[]}
+
+            for fold_index in range(len(train)):
+                self.model.fit(X[train[fold_index]], y[train[fold_index]])
+
+                y_pred = self.model.predict(X[test[fold_index]])
+                scores["test_accuracy"].append(accuracy_score(y_pred, y[test[fold_index]]))
             
             #self.__save_params()
             params = self.model.get_params(deep=True)
@@ -60,7 +66,7 @@ class Experiment:
             for param, value in params.items():
                 mlflow.log_param(param, value)
             
-            mlflow.log_param("training size", (len(X)*(cv-1))/cv)
+            mlflow.log_param("training size", (len(X)*(len(train)-1))/len(train))
             
             for metric, score in scores.items():  
                 mlflow.log_metric(metric + '_mean', np.mean(score))

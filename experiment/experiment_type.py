@@ -3,7 +3,7 @@ from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, make_scorer
 
 
 
-def launch_experiment(exp, mode, X_train, y_train, X_valid=None, y_valid=None, test=False):
+def launch_experiment(exp, mode, X_train, y_train, X_valid=None, y_valid=None,train_indexes=None, test_indexes=None, test=False):
    
     if test:
         prefix = 'test_'
@@ -19,7 +19,7 @@ def launch_experiment(exp, mode, X_train, y_train, X_valid=None, y_valid=None, t
         metrics =  {accuracy_score.__name__:make_scorer(accuracy_score), f1_score.__name__:make_scorer(f1_score),
         roc_auc_score.__name__:make_scorer((roc_auc_score))}
 
-        exp.run_cross_valid_experimentation(X_train, y_train, scorers=metrics, return_train_score=True)
+        exp.run_cross_valid_experimentation(X_train, y_train, train_indexes, test_indexes, scorers=metrics, return_train_score=True)
 
 
 def training_size_evaluation(exp, mode, range_step, X_train, y_train, X_valid, y_valid):

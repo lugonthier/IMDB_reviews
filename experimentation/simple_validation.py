@@ -61,6 +61,7 @@ def main():
     X_valid = df_valid.review.to_numpy()
     y_valid = df_valid.sentiment.apply(lambda x: 0 if x=="negative" else 1).to_numpy()
 
+    
 
     if new_experiment == 1:
             exp = Experiment(experiment_name=experiment_name) 
@@ -73,8 +74,17 @@ def main():
     for key, model in all_models.items():
         pipe = Pipeline(steps=[('preprocessor',text_prep), ('vect', vect), ('model', model)])
         exp.model = pipe
+        
+        if mode == 2:
+            train = []
+            test = []
+            for column in df_train.columns:
+                if 'fold' in column:
+                    train.append(df_train[df_train[column]=='train'].index)
+                    test.append(df_train[df_train[column]=='test'].index)
 
-        launch_experiment(exp, mode, X_train, y_train, X_valid, y_valid)
+        launch_experiment(exp, mode, X_train, y_train, X_valid, y_valid, train_indexes=train, test_indexes=test)
+        
 
 
 if __name__ == "__main__":
