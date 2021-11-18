@@ -3,8 +3,8 @@ import numpy as np
 import mlflow
 
 from typing import Dict, List, Union
-from sklearn.model_selection import cross_validate
-from sklearn.metrics import accuracy_score
+
+from time import time
 
 class Experiment:
     """Class to track machine learning experiment. Based on the open source project mlflow.
@@ -37,6 +37,16 @@ class Experiment:
             
     def load_data(self, X_train:Union[List, np.ndarray, pd.Series], y_train:Union[List, np.ndarray, pd.Series], X_test:Union[List, np.ndarray, pd.Series]=None,
             y_test:Union[List, np.ndarray, pd.Series]=None, train_indexes:Union[List, np.ndarray, pd.Series]=None, test_indexes:Union[List, np.ndarray, pd.Series]=None) -> None:
+        """[summary]
+
+        Args:
+            X_train (Union[List, np.ndarray, pd.Series]): Data used to train the model.
+            y_train (Union[List, np.ndarray, pd.Series]): Target corresponding to X_train.
+            X_test (Union[List, np.ndarray, pd.Series]): Data used to evaluate the model.
+            y_test (Union[List, np.ndarray, pd.Series]): Target corresponding to X_test.
+            train_indexes (Union[List, np.ndarray, pd.Series], optional): Indices of train folders in X_train for cross validation. Defaults to None.
+            test_indexes (Union[List, np.ndarray, pd.Series], optional): Indices of test folder in X_test for cross validation. Defaults to None.
+        """
 
         self.X_train = X_train
         self.y_train = y_train
@@ -46,29 +56,46 @@ class Experiment:
         self.test_indexes = test_indexes
 
     
-    def run_cross_valid_experimentation(self, scorers:Dict, return_train_score:bool=False) -> None:
+    def run_cross_valid_experimentation(self, metrics:Dict, prefix:str) -> None:
         """This method is used to run a cross validation. Model parameters and model scores are saved.
 
         Args:
-            X (Union[List, np.ndarray, pd.Series]): Data to use in cross validation.
-            y (Union[List, np.ndarray, pd.Series]): Target corresponding to X.
-            scorers (Dict): sklearn scorers.
-            cv (int, optional): number of folder. Defaults to 5.
-            return_train_score (bool, optional): boolean to decided If return train score or not. Defaults to False.
+            metrics (Dict): metrics used to evaluate the model.
+            prefix (str): To decide if it's test or validation purpose.
         """
         
         mlflow.set_tracking_uri(self.tracking_uri)
         
         with mlflow.start_run(experiment_id=self.experiment_id) as run:
-            #scores = cross_validate(self.model, X=X, y=y, scoring=scorers, cv=cv, return_train_score=return_train_score)
-            scores = {'test_accuracy':[]}
-
-            for fold_index in range(len(self.train_indexes)):
-                self.model.fit(self.X_train[self.train_indexes[fold_index]], self.y_train[self.train_indexes[fold_index]])
-
-                y_pred = self.model.predict(self.X_train[self.test_indexes[fold_index]])
-                scores["test_accuracy"].append(accuracy_score(y_pred, self.y_train[self.test_indexes[fold_index]]))
             
+            scores = {}
+            for metric_name in metrics.keys():
+                scores['train_'+metric_name] = []
+                scores[prefix+metric_name] = []
+
+
+            fit_time = []
+            predict_time = []
+            for fold_index in range(len(self.train_indexes)):
+
+                training_time0 = time()
+                self.model.fit(self.X_train[self.train_indexes[fold_index]], self.y_train[self.train_indexes[fold_index]])
+                training_time1 = time()
+                y_pred_train = self.model.predict(self.X_train[self.train_indexes[fold_index]])
+
+                testing_time0 = time()
+                y_pred_test = self.model.predict(self.X_train[self.test_indexes[fold_index]])
+                testing_time1 = time()
+
+                fit_time.append(training_time1 - training_time0)
+                predict_time.append(testing_time1 - testing_time0)
+
+                for metric_name, metric in metrics.items():
+                    scores['train_'+metric_name].append(metric(y_pred_train, self.y_train[self.train_indexes[fold_index]]))
+                    scores[prefix+metric_name].append(metric(y_pred_test, self.y_train[self.test_indexes[fold_index]]))
+            
+            scores['fit_time'] = fit_time
+            scores['predict_time'] = predict_time
             #self.__save_params()
             params = self.model.get_params(deep=True)
 
@@ -83,14 +110,10 @@ class Experiment:
         
             
         
-    def run_simple_experimentation(self, prefix:str="valid", metrics:Dict=None) -> None:
+    def run_simple_experimentation(self, prefix:str="valid_", metrics:Dict=None) -> None:
         """This method is used to run a simple validation. Model parameters and model scores are saved.
 
         Args:
-            X_train (Union[List, np.ndarray, pd.Series]): Data used to train the model.
-            y_train (Union[List, np.ndarray, pd.Series]): Target corresponding to X_train.
-            X_test (Union[List, np.ndarray, pd.Series]): Data used to evaluate the model.
-            y_test (Union[List, np.ndarray, pd.Series]): Target corresponding to X_test.
             prefix (str, optional): to prefix metrics name. Defaults to "valid".
             metrics (Dict, optional): sklearn metrics. Defaults to None.
         """
