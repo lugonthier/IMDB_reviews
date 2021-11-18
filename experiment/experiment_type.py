@@ -1,5 +1,5 @@
 
-from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, make_scorer
+from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 
 
 
@@ -12,12 +12,10 @@ def launch_experiment(exp, mode, test=False):
     metrics = {accuracy_score.__name__:accuracy_score, f1_score.__name__:f1_score, roc_auc_score.__name__:roc_auc_score}
     if mode == 1:
 
-            metrics = {accuracy_score.__name__:accuracy_score, f1_score.__name__:f1_score, roc_auc_score.__name__:roc_auc_score}
+           
             exp.run_simple_experimentation( prefix,  metrics)
 
     elif mode == 2:
-        #metrics =  {accuracy_score.__name__:make_scorer(accuracy_score), f1_score.__name__:make_scorer(f1_score),
-        #roc_auc_score.__name__:make_scorer((roc_auc_score))}
 
         exp.run_cross_valid_experimentation(metrics, prefix)
 

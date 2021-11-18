@@ -59,8 +59,8 @@ def main():
     all_models = {1:LogisticRegression(), 2:DecisionTreeClassifier(), 3:MultinomialNB(),  5:LinearSVC(), 6:MLPClassifier()}
     
 
-    df_train = pd.read_csv('/Users/gonthierlucas/Desktop/DS_project/IMDB_reviews/data/IMDB_train.csv')
-    df_valid = pd.read_csv('/Users/gonthierlucas/Desktop/DS_project/IMDB_reviews/data/IMDB_valid.csv')
+    df_train = pd.read_csv('data/IMDB_train.csv')
+    df_valid = pd.read_csv('data/IMDB_valid.csv')
 
     X_train = df_train.review.to_numpy()
     y_train = df_train.sentiment.apply(lambda x: 0 if x=="negative" else 1).to_numpy()
@@ -68,8 +68,6 @@ def main():
     X_valid = df_valid.review.to_numpy()
     y_valid = df_valid.sentiment.apply(lambda x: 0 if x=="negative" else 1).to_numpy()
 
-
-    
     
     train = []
     test = []
@@ -91,10 +89,6 @@ def main():
     for key, model in all_models.items():
         pipe = Pipeline(steps=[('preprocessor',text_prep), ('vect', vect), ('model', model)])
         exp.model = pipe
-
-        
-
-        
 
         if evaluation == 1:
             training_size_evaluation(exp, mode, range_step)
