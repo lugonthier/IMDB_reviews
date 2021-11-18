@@ -70,6 +70,13 @@ def main():
 
 
     
+    
+    train = []
+    test = []
+    for column in df_train.columns:
+        if 'fold' in column:
+            train.append(df_train[df_train[column]=='train'].index)
+            test.append(df_train[df_train[column]=='test'].index)
 
     if new_experiment == 1:
             exp = Experiment(experiment_name=experiment_name) 
@@ -79,14 +86,20 @@ def main():
     text_prep = TextPreprocessor(stopwords=stopwords, normalization=normalization)
     vect = select_vectorizer(vectorizer)
 
+    exp.load_data(X_train, y_train, X_valid, y_valid, train, test)
+
     for key, model in all_models.items():
         pipe = Pipeline(steps=[('preprocessor',text_prep), ('vect', vect), ('model', model)])
         exp.model = pipe
 
+        
+
+        
+
         if evaluation == 1:
-            training_size_evaluation(exp, mode, range_step, X_train, y_train, X_valid, y_valid)
+            training_size_evaluation(exp, mode, range_step)
         elif evaluation == 2:
-            dimensionality_size_evaluation(exp, mode, range_step, X_train, y_train, X_valid, y_valid)
+            dimensionality_size_evaluation(exp, mode, range_step)
 
 
 if __name__ == "__main__":

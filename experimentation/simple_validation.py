@@ -83,7 +83,8 @@ def main():
                     train.append(df_train[df_train[column]=='train'].index)
                     test.append(df_train[df_train[column]=='test'].index)
 
-        launch_experiment(exp, mode, X_train, y_train, X_valid, y_valid, train_indexes=train, test_indexes=test)
+        exp.load_data(X_train, y_train, X_valid, y_valid, train, test)
+        launch_experiment(exp, mode)
         
 
 

@@ -35,9 +35,18 @@ class Experiment:
         else:
             self.experiment_id = experiment_id
             
+    def load_data(self, X_train:Union[List, np.ndarray, pd.Series], y_train:Union[List, np.ndarray, pd.Series], X_test:Union[List, np.ndarray, pd.Series]=None,
+            y_test:Union[List, np.ndarray, pd.Series]=None, train_indexes:Union[List, np.ndarray, pd.Series]=None, test_indexes:Union[List, np.ndarray, pd.Series]=None) -> None:
+
+        self.X_train = X_train
+        self.y_train = y_train
+        self.X_test = X_test
+        self.y_test = y_test
+        self.train_indexes = train_indexes
+        self.test_indexes = test_indexes
 
     
-    def run_cross_valid_experimentation(self, X:Union[List, np.ndarray, pd.Series], y:Union[List, np.ndarray, pd.Series], train:np.ndarray, test:np.ndarray, scorers:Dict, return_train_score:bool=False) -> None:
+    def run_cross_valid_experimentation(self, scorers:Dict, return_train_score:bool=False) -> None:
         """This method is used to run a cross validation. Model parameters and model scores are saved.
 
         Args:
@@ -54,11 +63,11 @@ class Experiment:
             #scores = cross_validate(self.model, X=X, y=y, scoring=scorers, cv=cv, return_train_score=return_train_score)
             scores = {'test_accuracy':[]}
 
-            for fold_index in range(len(train)):
-                self.model.fit(X[train[fold_index]], y[train[fold_index]])
+            for fold_index in range(len(self.train_indexes)):
+                self.model.fit(self.X_train[self.train_indexes[fold_index]], self.y_train[self.train_indexes[fold_index]])
 
-                y_pred = self.model.predict(X[test[fold_index]])
-                scores["test_accuracy"].append(accuracy_score(y_pred, y[test[fold_index]]))
+                y_pred = self.model.predict(self.X_train[self.test_indexes[fold_index]])
+                scores["test_accuracy"].append(accuracy_score(y_pred, self.y_train[self.test_indexes[fold_index]]))
             
             #self.__save_params()
             params = self.model.get_params(deep=True)
@@ -66,7 +75,7 @@ class Experiment:
             for param, value in params.items():
                 mlflow.log_param(param, value)
             
-            mlflow.log_param("training size", (len(X)*(len(train)-1))/len(train))
+            mlflow.log_param("training size", (len(self.y_train)*(len(self.train_indexes)-1))/len(self.train_indexes))
             
             for metric, score in scores.items():  
                 mlflow.log_metric(metric + '_mean', np.mean(score))
@@ -74,8 +83,7 @@ class Experiment:
         
             
         
-    def run_simple_experimentation(self, X_train:Union[List, np.ndarray, pd.Series], y_train:Union[List, np.ndarray, pd.Series],
-            X_test:Union[List, np.ndarray, pd.Series], y_test:Union[List, np.ndarray, pd.Series], prefix:str="valid", metrics:Dict=None) -> None:
+    def run_simple_experimentation(self, prefix:str="valid", metrics:Dict=None) -> None:
         """This method is used to run a simple validation. Model parameters and model scores are saved.
 
         Args:
@@ -91,11 +99,11 @@ class Experiment:
         mlflow.sklearn.autolog(log_models=False)
         with mlflow.start_run(experiment_id=self.experiment_id):
             
-            self.model.fit(X_train, y_train)
+            self.model.fit(self.X_train, self.y_train)
             
             
-            mlflow.log_param("training size", len(X_train))
-            mlflow.sklearn.eval_and_log_metrics(self.model, X_test, y_test, prefix=prefix)   
+            mlflow.log_param("training size", len(self.X_train))
+            mlflow.sklearn.eval_and_log_metrics(self.model, self.X_test, self.y_test, prefix=prefix)   
             #for key, metric in metrics.items():  
             #    mlflow.log_metric(key, metric(y_pred, y_test))
         
