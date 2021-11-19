@@ -15,15 +15,14 @@ def generate_holdout(generate_kfold:bool=True, k=5):
     """
     df = pd.read_csv('data/IMDB_Dataset.csv')
     
-    df_origin_train, df_test = train_test_split(df, test_size=.2, random_state=42)
+    df_train, df_test = train_test_split(df, test_size=.2, random_state=42)
 
-    df_train, df_valid = train_test_split(df_origin_train, test_size=.2, random_state=42)
+    
     print(df_train.head())
     if generate_kfold:
         df_train = K_fold(df_train, k)
 
     df_train.to_csv('data/IMDB_train.csv', index=False)
-    df_valid.to_csv('data/IMDB_valid.csv', index=False)
     df_test.to_csv('data/IMDB_test.csv', index=False)
 
 

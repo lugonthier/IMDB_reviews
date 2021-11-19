@@ -35,8 +35,9 @@ class Experiment:
         else:
             self.experiment_id = experiment_id
             
-    def load_data(self, X_train:Union[List, np.ndarray, pd.Series], y_train:Union[List, np.ndarray, pd.Series], X_test:Union[List, np.ndarray, pd.Series]=None,
-            y_test:Union[List, np.ndarray, pd.Series]=None, train_indexes:Union[List, np.ndarray, pd.Series]=None, test_indexes:Union[List, np.ndarray, pd.Series]=None) -> None:
+    def load_data(self, X_train:Union[List, np.ndarray, pd.Series], y_train:Union[List, np.ndarray, pd.Series],  train_indexes:Union[List, np.ndarray, pd.Series]=None,
+             test_indexes:Union[List, np.ndarray, pd.Series]=None, X_test:Union[List, np.ndarray, pd.Series]=None,
+            y_test:Union[List, np.ndarray, pd.Series]=None) -> None:
         """[summary]
 
         Args:
@@ -79,6 +80,9 @@ class Experiment:
             for fold_index in range(len(self.train_indexes)):
 
                 training_time0 = time()
+                unique, counts = np.unique(self.y_train[self.train_indexes[fold_index]], return_counts=True)
+                print(dict(zip(unique, counts)))
+                print('-'*20)
                 self.model.fit(self.X_train[self.train_indexes[fold_index]], self.y_train[self.train_indexes[fold_index]])
                 training_time1 = time()
                 y_pred_train = self.model.predict(self.X_train[self.train_indexes[fold_index]])
@@ -102,7 +106,7 @@ class Experiment:
             for param, value in params.items():
                 mlflow.log_param(param, value)
             
-            mlflow.log_param("training size", (len(self.y_train)*(len(self.train_indexes)-1))/len(self.train_indexes))
+            mlflow.log_param("training_size", len(self.train_indexes[fold_index]))
             
             for metric, score in scores.items():  
                 mlflow.log_metric(metric + '_mean', np.mean(score))

@@ -24,7 +24,7 @@ from experiment.experiment_type import dimensionality_size_evaluation, training_
 def main():
 
     if len(sys.argv) < 7:
-        usage = "\n Usage: python main.py  mode  model_selected  new_experiment  experiment_name/experiment_id  evaluation\
+        usage = "\n Usage: python experimentation/size_evaluation.py  mode  stopwords  normalization vectorizer new_experiment  experiment_name/experiment_id  evaluation range_step\
         \n\n\t mode : 1 => simple experiment, 2 => cross validation\
         \
         \n\t stopwords : 0 => No, 1 => 'english' from nltk\
@@ -36,7 +36,7 @@ def main():
         \n\t experiment_name (if new_experiment==1)\
         \n\t experiment_id (if new_experiment==0)\
         \n\t evaluation : 1 => training size, 2 => dimensionality size\
-        \n\t range_step integer\
+        \n\t range_step integer : step to increase the size. for example 1000. then if max size is 12000 => range(1000, 12000, 1000)\
         "
         print(usage)
         return
@@ -60,13 +60,12 @@ def main():
     
 
     df_train = pd.read_csv('data/IMDB_train.csv')
-    df_valid = pd.read_csv('data/IMDB_valid.csv')
+    
 
     X_train = df_train.review.to_numpy()
     y_train = df_train.sentiment.apply(lambda x: 0 if x=="negative" else 1).to_numpy()
 
-    X_valid = df_valid.review.to_numpy()
-    y_valid = df_valid.sentiment.apply(lambda x: 0 if x=="negative" else 1).to_numpy()
+    
 
     
     train = []
@@ -84,7 +83,7 @@ def main():
     text_prep = TextPreprocessor(stopwords=stopwords, normalization=normalization)
     vect = select_vectorizer(vectorizer)
 
-    exp.load_data(X_train, y_train, X_valid, y_valid, train, test)
+    exp.load_data(X_train, y_train, train, test)
 
     for key, model in all_models.items():
         pipe = Pipeline(steps=[('preprocessor',text_prep), ('vect', vect), ('model', model)])
