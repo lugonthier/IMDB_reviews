@@ -1,4 +1,5 @@
 
+
 import pandas as pd
 import numpy as np
 
@@ -15,44 +16,24 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from preprocessing.text_preprocessor import TextPreprocessor
 from preprocessing.vectorizer import select_vectorizer
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.svm import LinearSVC
-from sklearn.linear_model import LogisticRegression
+from model.base_model import get_model_and_params_by_name, get_model_name_by_id
+
 
 
 def main():
     if len(sys.argv) < 2:
         usage = "\n Usage: python hyperparameter_search.py model_selected\
-        \n\n\t model_selected : 1 => LogisticRegression, 2 => LinearSVC, ..\
+        \n\n\t model_selected : 1 => LogisticRegression, 2 => DecisionTree, 3 => MultinomialNB, 4 => RandomForest, 5 => LinearSVC, 6 => Multi Layer Perceptron, else => All models \
         "
         print(usage)
         return
 
     model_selected = int(sys.argv[1])
 
-    if model_selected == 1:
-        model_selected = LogisticRegression.__name__
-    elif model_selected == 2:
-        model_selected = DecisionTreeClassifier.__name__
-    elif model_selected == 3:
-        model_selected = LinearSVC.__name__
-
-
-    models = {DecisionTreeClassifier.__name__:DecisionTreeClassifier(), LinearSVC.__name__:LinearSVC(),
-          
-           LogisticRegression.__name__:LogisticRegression()
-        }
-
-    params = {
-            DecisionTreeClassifier.__name__:{ DecisionTreeClassifier.__name__+'__criterion':['gini', 'entropy'],
-                                            DecisionTreeClassifier.__name__+'__splitter':['best', 'random'], DecisionTreeClassifier.__name__+'__max_depth':range(2, 14, 1),
-                                            DecisionTreeClassifier.__name__+'__max_features':['auto', 'sqrt', 'log2']},
-         
-            LinearSVC.__name__:{   LinearSVC.__name__+'__loss':['hinge', 'squared_hinge'], LinearSVC.__name__+'__tol':[.000001, .00001, .0001, .001],
-                                            LinearSVC.__name__+'__C':[.001, .01, 1., 10., 100.], LinearSVC.__name__+'__max_iter':range(800, 2100, 100) },
-            LogisticRegression.__name__:{  LogisticRegression.__name__+'__tol':[.000001, .00001], LogisticRegression.__name__+'__C':[.001, .01], LogisticRegression.__name__+'__solver':[ 'sag', 'saga'],
-                                        LogisticRegression.__name__+'__max_iter':range(150, 851, 300)},
-         }
+    
+    model_names = get_model_name_by_id(model_selected)
+    
+    models, params = get_model_and_params_by_name(model_names)
 
 
     df_train = pd.read_csv('data/IMDB_train.csv')
@@ -67,17 +48,19 @@ def main():
     X_transformed = preprocessor.transform(X)
 
     
+    #Handle several model tuning but should be just one model unless there are few parameters.
+    for key, model in models.items():
+        print(key, model, params)
+        pipe = Pipeline(steps=[('vectorizer', select_vectorizer(1)), (key, model)])
 
-    pipe = Pipeline(steps=[('vectorizer', select_vectorizer(1)), (model_selected, models[model_selected])])
 
+        grid = GridSearchCV(pipe, params[key], verbose=2)
 
-    grid = GridSearchCV(pipe, params[model_selected], verbose=2)
+        grid.fit(X_transformed, y)
 
-    grid.fit(X_transformed, y)
+        results = pd.DataFrame(grid.cv_results_)
 
-    results = pd.DataFrame(grid.cv_results_)
-
-    results.to_csv( 'data/results/hyperparameter_search/'+ model_selected + '.csv')
+        results.to_csv('data/results/hyperparameter_search/'+ key + '.csv')
 
 if __name__== "__main__":
     main()

@@ -38,13 +38,13 @@ class Experiment:
     def load_data(self, X_train:Union[List, np.ndarray, pd.Series], y_train:Union[List, np.ndarray, pd.Series],  train_indexes:Union[List, np.ndarray, pd.Series]=None,
              test_indexes:Union[List, np.ndarray, pd.Series]=None, X_test:Union[List, np.ndarray, pd.Series]=None,
             y_test:Union[List, np.ndarray, pd.Series]=None) -> None:
-        """[summary]
+        """ This method load all data that will be used. Note that either (X_test,y_test) or (train_indexes,test_indexes) should be set.
 
         Args:
             X_train (Union[List, np.ndarray, pd.Series]): Data used to train the model.
             y_train (Union[List, np.ndarray, pd.Series]): Target corresponding to X_train.
-            X_test (Union[List, np.ndarray, pd.Series]): Data used to evaluate the model.
-            y_test (Union[List, np.ndarray, pd.Series]): Target corresponding to X_test.
+            X_test (Union[List, np.ndarray, pd.Series]): Data used to evaluate the model. Defaults to None.
+            y_test (Union[List, np.ndarray, pd.Series]): Target corresponding to X_test. Defaults to None.
             train_indexes (Union[List, np.ndarray, pd.Series], optional): Indices of train folders in X_train for cross validation. Defaults to None.
             test_indexes (Union[List, np.ndarray, pd.Series], optional): Indices of test folder in X_test for cross validation. Defaults to None.
         """
