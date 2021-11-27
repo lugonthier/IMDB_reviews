@@ -19,12 +19,14 @@ from model.base_model import get_model_and_params_by_name, get_model_name_by_id
 def main():
     if len(sys.argv) < 2:
         usage = "\n Usage: python hyperparameter_search.py model_selected\
+            \n\n\t vectorizer : 1 => CountVectorizer, 2 => TfidfVectorizer\
         \n\n\t model_selected : 1 => LogisticRegression, 2 => DecisionTree, 3 => MultinomialNB, 4 => RandomForest, 5 => LinearSVC, 6 => Multi Layer Perceptron, else => All models \
         "
         print(usage)
         return
 
-    model_selected = int(sys.argv[1])
+    vectorizer = int(sys.argv[1])
+    model_selected = int(sys.argv[2])
 
     
     model_names = get_model_name_by_id(model_selected)
@@ -47,16 +49,16 @@ def main():
     #Handle several model tuning but should be just one model unless there are few parameters.
     for key, model in models.items():
         print(key, model, params)
-        pipe = Pipeline(steps=[('vectorizer', select_vectorizer(1)), (key, model)])
+        pipe = Pipeline(steps=[('vectorizer', select_vectorizer(vectorizer)), (key, model)])
 
 
-        grid = GridSearchCV(pipe, params[key], verbose=2)
+        grid = GridSearchCV(pipe, params[key], verbose=1)
 
         grid.fit(X_transformed, y)
 
         results = pd.DataFrame(grid.cv_results_)
 
-        results.to_csv('data/results/hyperparameter_search/'+ key + '.csv')
+        results.to_csv('results/hyperparameter_search/'+ key + '.csv')
 
 if __name__== "__main__":
     main()
