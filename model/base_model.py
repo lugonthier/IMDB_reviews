@@ -19,8 +19,8 @@ def get_model_name_by_id(key_model:int) -> Dict:
         return 'ALL'
 
 def get_model_by_name(name:str) -> Dict:
-    models = {LogisticRegression.__name__:LogisticRegression(), DecisionTreeClassifier.__name__:DecisionTreeClassifier(),
-     MultinomialNB.__name__:MultinomialNB(), RandomForestClassifier.__name__:RandomForestClassifier(),  LinearSVC.__name__:LinearSVC(), MLPClassifier.__name__:MLPClassifier()}
+    models = {LogisticRegression.__name__:LogisticRegression(), DecisionTreeClassifier.__name__:DecisionTreeClassifier(max_depth=12),
+     MultinomialNB.__name__:MultinomialNB(), RandomForestClassifier.__name__:RandomForestClassifier(max_depth=12),  LinearSVC.__name__:LinearSVC(), MLPClassifier.__name__:MLPClassifier()}
 
     if name in models.keys():
         single_model = {name: models[name]}
