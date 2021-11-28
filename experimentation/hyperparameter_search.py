@@ -58,7 +58,7 @@ def main():
 
         results = pd.DataFrame(grid.cv_results_)
 
-        results.to_csv('results/hyperparameter_search/'+ key + '.csv')
+        results.to_csv('result_analysis/results/hyperparameter_search/'+ key + '.csv')
 
 if __name__== "__main__":
     main()

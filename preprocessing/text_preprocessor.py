@@ -72,10 +72,10 @@ class TextPreprocessor(BaseEstimator):
         
         vect_stopwords = np.vectorize(self.remove_stopwords)
         X_transformed = vect_stopwords(X_transformed)
-        
+
         vect_normalize = np.vectorize(self.normalize)
         X_transformed = vect_normalize(X_transformed)
-        
+
         X_transformed = [" ".join(Xi) for Xi in X_transformed]
 
         return X_transformed

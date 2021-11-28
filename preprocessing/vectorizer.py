@@ -21,8 +21,8 @@ def select_vectorizer(vect_selected: int) -> any:
         any: A Vectorizer
     """
     if vect_selected == 1:
-        return CountVectorizer()
+        return CountVectorizer( max_features=12000)
 
     elif vect_selected == 2:
-        return TfidfVectorizer()
+        return TfidfVectorizer( )
 
