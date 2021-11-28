@@ -3,26 +3,33 @@ import sys
 
 current_module = sys.modules[__name__]
 
-
+from sklearn.base import BaseEstimator
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
 
 
 
-def select_vectorizer(vect_selected: int) -> any:
-    """This function return a Vectorizer based on parameter.
+class Vectorizer(BaseEstimator):
 
-    Args:
-        vect_selected (int): 
-            1 => CountVectorizer
-            2 => TfidfVectorizer
+    def __init__(self, vectorizer: int, ngram_range=(1, 1), max_features=None) -> None:
+        self.ngram_range = ngram_range
+        self.max_features = max_features
 
-    Returns:
-        any: A Vectorizer
-    """
-    if vect_selected == 1:
-        return CountVectorizer( max_features=12000)
+        if vectorizer == 1:
+            self.vect = CountVectorizer(ngram_range=ngram_range, max_features=max_features)
+        elif vectorizer == 2:
+            self.vect = TfidfVectorizer(ngram_range=ngram_range, max_features=max_features)
+        else:
+            print('The vectorizer id selected doesn\'t belong to any vectorizer')
+    
+    def fit(self, X, y=None):
 
-    elif vect_selected == 2:
-        return TfidfVectorizer( )
+        return self.vect.fit(X, y)
 
+    def transform(self, X, y=None):
+        
+        return self.vect.transform(X)
+    
+    def fit_transform(self, X, y=None):
+
+        return self.vect.fit_transform(X, y)

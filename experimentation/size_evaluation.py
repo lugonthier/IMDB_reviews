@@ -11,7 +11,7 @@ sys.path.append(parentdir)
 from sklearn.pipeline import Pipeline
 
 from preprocessing.text_preprocessor import TextPreprocessor
-from preprocessing.vectorizer import select_vectorizer
+from preprocessing.vectorizer import Vectorizer
 from experiment.experiment import Experiment
 from experiment.experiment_type import dimensionality_size_evaluation, training_size_evaluation
 from model.base_model import get_model_by_name, get_model_name_by_id
@@ -78,7 +78,7 @@ def main():
         exp = Experiment(experiment_id=experiment_id)
 
     text_prep = TextPreprocessor(stopwords=stopwords, normalization=normalization)
-    vect = select_vectorizer(vectorizer)
+    vect = Vectorizer(vectorizer)
 
     exp.load_data(X_train, y_train, train, test)
 

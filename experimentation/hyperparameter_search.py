@@ -11,7 +11,7 @@ sys.path.append(parentdir)
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from preprocessing.text_preprocessor import TextPreprocessor
-from preprocessing.vectorizer import select_vectorizer
+from preprocessing.vectorizer import Vectorizer
 from model.base_model import get_model_and_params_by_name, get_model_name_by_id
 
 
@@ -25,8 +25,10 @@ def main():
         print(usage)
         return
 
-    vectorizer = int(sys.argv[1])
-    model_selected = int(sys.argv[2])
+    stopwords = [] if int(sys.argv[1]) == 0 else 'english'
+    normalization = int(sys.argv[2])
+    vectorizer = int(sys.argv[3])
+    model_selected = int(sys.argv[4])
 
     
     model_names = get_model_name_by_id(model_selected)
@@ -42,14 +44,14 @@ def main():
     #Because data transformed will not be dependent of data fitted
     #Contrary to the vectorizers.
 
-    preprocessor = TextPreprocessor()
+    preprocessor = TextPreprocessor(stopwords=stopwords, normalization=normalization)
     X_transformed = preprocessor.transform(X)
 
     
     #Handle several model tuning but should be just one model unless there are few parameters.
     for key, model in models.items():
         print(key, model, params)
-        pipe = Pipeline(steps=[('vectorizer', select_vectorizer(vectorizer)), (key, model)])
+        pipe = Pipeline(steps=[('vectorizer', Vectorizer(vectorizer)), (key, model)])
 
 
         grid = GridSearchCV(pipe, params[key], verbose=1)
