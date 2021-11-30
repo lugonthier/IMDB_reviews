@@ -31,22 +31,25 @@ def get_model_by_name(name:str) -> Dict:
 def get_params_model_by_name(name: str) -> Dict:
 
     params = {
-            DecisionTreeClassifier.__name__:{ DecisionTreeClassifier.__name__+'__criterion':['gini', 'entropy'],
-                                            DecisionTreeClassifier.__name__+'__splitter':['best', 'random'], DecisionTreeClassifier.__name__+'__max_depth':range(6, 21, 1),
+            DecisionTreeClassifier.__name__:{'vect__max_features':[4000],
+                DecisionTreeClassifier.__name__+'__criterion':['gini', 'entropy'],
+                                            DecisionTreeClassifier.__name__+'__splitter':['best', 'random'], DecisionTreeClassifier.__name__+'__max_depth':range(12, 15, 1),
                                             DecisionTreeClassifier.__name__+'__max_features':['auto', 'sqrt', 'log2']},
 
-            MultinomialNB.__name__:{MultinomialNB.__name__+'__alpha':[0, 0.25, 0.5, 0.75, 1.], MultinomialNB.__name__+'__fit_prior':[True, False]},
+            MultinomialNB.__name__:{'vect__max_features':[None], MultinomialNB.__name__+'__alpha':[ 0.25, 0.5, 0.75, 1.], MultinomialNB.__name__+'__fit_prior':[True, False]},
 
-            RandomForestClassifier.__name__:{RandomForestClassifier.__name__+'__n_estimators':range(50, 401, 50), RandomForestClassifier.__name__+'__criterion':['gini', 'entropy'],
-                                            RandomForestClassifier.__name__+'__max_depth':range(6, 21, 1), RandomForestClassifier.__name__+'__max_features':['auto', 'sqrt', 'log2']},
+            RandomForestClassifier.__name__:{'vect__max_features':[32000], RandomForestClassifier.__name__+'__n_estimators':range(50, 351, 100),
+                                             RandomForestClassifier.__name__+'__criterion':['gini', 'entropy'],
+                                            RandomForestClassifier.__name__+'__max_depth':range(12, 15, 1), RandomForestClassifier.__name__+'__max_features':['auto', 'sqrt', 'log2']},
                                             
-            MLPClassifier.__name__:{MLPClassifier.__name__+'__hidden_layer_sizes':[(50,), (50, 100, 50), (50, 100, 200, 100, 50)], MLPClassifier.__name__+'__solver':['lbfgs','adam'], MLPClassifier.__name__+'__alpha':[0.0001, 0.001, 0.01],
+            MLPClassifier.__name__:{'vect__max_features':[400], MLPClassifier.__name__+'__hidden_layer_sizes':[(50,), (50, 100, 50), (50, 100, 200, 100, 50)], MLPClassifier.__name__+'__solver':['lbfgs','adam'], MLPClassifier.__name__+'__alpha':[0.0001, 0.001, 0.01],
             MLPClassifier.__name__+'__learning_rate': ['constant','adaptive'], MLPClassifier.__name__+'__max_iter':[300]},
          
-            LinearSVC.__name__:{   LinearSVC.__name__+'__loss':['hinge', 'squared_hinge'],
+            LinearSVC.__name__:{   'vect__max_features':[4000], LinearSVC.__name__+'__loss':['hinge', 'squared_hinge'],
                                             LinearSVC.__name__+'__C':[.001, .01, 1., 10., 100.],  LinearSVC.__name__+'__max_iter':[1500] },
 
-            LogisticRegression.__name__:{LogisticRegression.__name__+'__C':[  .001, .01, .1, 1., 10., 100.], LogisticRegression.__name__+'__solver':[ 'sag', 'saga'],
+            LogisticRegression.__name__:{'vect__max_features':[None],
+                                        LogisticRegression.__name__+'__C':[  .001, .01, .1, 1., 10., 100.], LogisticRegression.__name__+'__solver':[ 'sag', 'saga'],
                                        LogisticRegression.__name__+'__max_iter':[800]}
         }
 
