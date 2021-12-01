@@ -19,6 +19,8 @@ from model.base_model import get_model_and_params_by_name, get_model_name_by_id
 def main():
     if len(sys.argv) < 5:
         usage = "\n Usage: python hyperparameter_search.py model_selected\
+            \n\n\t stopwords : 0 => No, 1 => 'english' from nltk\
+            \n\n\t normalization : 0 => No, 1 => WordNetLemmatizer, 2 => PorterStemmer \
             \n\n\t vectorizer : 1 => CountVectorizer, 2 => TfidfVectorizer\
         \n\n\t model_selected : 1 => LogisticRegression, 2 => DecisionTree, 3 => MultinomialNB, 4 => RandomForest, 5 => LinearSVC, 6 => Multi Layer Perceptron, else => All models \
         "
