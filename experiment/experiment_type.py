@@ -70,7 +70,7 @@ def training_size_evaluation(exp:Experiment, mode:int, range_step:int) -> None:
     
  
 
-def dimensionality_size_evaluation(exp:Experiment,  mode:int, range_step:int, max_dim:int = 102000) -> None:#After investigation, maximum possible dimension is 101895
+def dimensionality_size_evaluation(exp:Experiment,  mode:int, range_step:int, max_dim:int = 102000, linear=False) -> None:#After investigation, maximum possible dimension is 101895
     """Function that evaluate models according to the number of dimensionality. 
     Args:
         exp (Experiment): An Experiment object already initialized with his pipeline and data.
@@ -78,8 +78,16 @@ def dimensionality_size_evaluation(exp:Experiment,  mode:int, range_step:int, ma
         range_step (int): step to increase number of dimension.
         max_dim (int, optional): maximum dimension wanted (or possible). Defaults to 102000.
     """
-    for dim in range(range_step, max_dim, range_step):
+    if linear:
+        for dim in range(range_step, max_dim, range_step):
 
-        exp.model[1].max_features = dim
-        launch_experiment(exp, mode)
+            exp.model[1].update_params(max_features=dim)
+            launch_experiment(exp, mode)
+    else:
+        dim = range_step
+        while dim < max_dim:
+            exp.model[1].update_params(max_features=dim)
+            launch_experiment(exp, mode)
+
+            dim = 2*dim
 

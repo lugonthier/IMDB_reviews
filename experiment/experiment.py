@@ -74,7 +74,6 @@ class Experiment:
                 scores['train_'+metric_name] = []
                 scores[prefix+metric_name] = []
 
-
             fit_time = []
             predict_time = []
             for fold_index in range(len(self.train_indexes)):
@@ -100,7 +99,7 @@ class Experiment:
             
             scores['fit_time'] = fit_time
             scores['predict_time'] = predict_time
-            #self.__save_params()
+            
             params = self.model.get_params(deep=True)
 
             for param, value in params.items():

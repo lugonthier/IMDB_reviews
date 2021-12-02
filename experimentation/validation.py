@@ -11,14 +11,14 @@ sys.path.append(parentdir)
 from sklearn.pipeline import Pipeline
 
 from preprocessing.text_preprocessor import TextPreprocessor
-from preprocessing.vectorizer import select_vectorizer
+from preprocessing.vectorizer import Vectorizer
 from experiment.experiment import Experiment
 from experiment.experiment_type import launch_experiment
 from model.base_model import get_model_by_name, get_model_name_by_id
 
 def main():
     if len(sys.argv) < 8:
-        usage = "\n Usage: python experimentation/simple_validation.py  mode stopwords  normalization  vectorizer  model_id  new_experiment  experiment_name/experiment_id\
+        usage = "\n Usage: python experimentation/validation.py  mode stopwords  normalization  vectorizer  model_id  new_experiment  experiment_name/experiment_id\
         \n\n\t mode : 1 => simple experiment, 2 => cross validation\
         \
         \n\t stopwords : 0 => No, 1 => 'english' from nltk\
@@ -67,7 +67,7 @@ def main():
         exp = Experiment(experiment_id=experiment_id)
 
     text_prep = TextPreprocessor(stopwords=stopwords, normalization=normalization)
-    vect = select_vectorizer(vectorizer)
+    vect = Vectorizer(vectorizer=vectorizer, max_features=32000)
 
     for key, model in all_models.items():
         pipe = Pipeline(steps=[('preprocessor',text_prep), ('vect', vect), ('model', model)])
