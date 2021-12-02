@@ -19,8 +19,8 @@ def get_model_name_by_id(key_model:int) -> Dict:
         return 'ALL'
 
 def get_model_by_name(name:str) -> Dict:
-    models = {LogisticRegression.__name__:LogisticRegression(max_iter=500), DecisionTreeClassifier.__name__:DecisionTreeClassifier(max_depth=12),
-     MultinomialNB.__name__:MultinomialNB(), RandomForestClassifier.__name__:RandomForestClassifier(max_depth=12),  LinearSVC.__name__:LinearSVC(), MLPClassifier.__name__:MLPClassifier()}
+    models = {LogisticRegression.__name__:LogisticRegression(max_iter=800, C=1, solver='sag'), DecisionTreeClassifier.__name__:DecisionTreeClassifier(criterion='gini', max_depth=14, max_features=None, splitter='best'),
+     MultinomialNB.__name__:MultinomialNB(alpha=0.75, fit_prior=False), RandomForestClassifier.__name__:RandomForestClassifier(criterion='gini', max_depth=14, n_estimators=350, max_features='sqrt'),  LinearSVC.__name__:LinearSVC(max_iter=6000, C=1, loss='hinge'), MLPClassifier.__name__:MLPClassifier(alpha=0.001, hidden_layer_sizes=(50, 100, 200, 100, 50), learning_rate='adaptive', solver='lbfgs', max_iter=1000)}
 
     if name in models.keys():
         single_model = {name: models[name]}
@@ -45,11 +45,11 @@ def get_params_model_by_name(name: str) -> Dict:
             MLPClassifier.__name__:{'vect__max_features':[2000], MLPClassifier.__name__+'__hidden_layer_sizes':[(50,), (50, 100, 50), (50, 100, 200, 100, 50)], MLPClassifier.__name__+'__solver':['lbfgs','adam'], MLPClassifier.__name__+'__alpha':[0.0001, 0.001, 0.01],
             MLPClassifier.__name__+'__learning_rate': ['constant','adaptive'], MLPClassifier.__name__+'__max_iter':[300]},
          
-            LinearSVC.__name__:{   'vect__max_features':[4000], LinearSVC.__name__+'__loss':['hinge', 'squared_hinge'],
-                                            LinearSVC.__name__+'__C':[.001, .01, .1, 1., 10., 100.],  LinearSVC.__name__+'__max_iter':[3000] },
+            LinearSVC.__name__:{   'vect__max_features':[8000], LinearSVC.__name__+'__loss':['hinge', 'squared_hinge'],
+                                            LinearSVC.__name__+'__C':[.001, .01, .1, 1., 10., 100.],  LinearSVC.__name__+'__max_iter':[6000] },
 
-            LogisticRegression.__name__:{'vect__max_features':[None],
-                                        LogisticRegression.__name__+'__C':[  .001, .01, .1, 1., 10., 100.], LogisticRegression.__name__+'__solver':[ 'sag', 'saga'],
+            LogisticRegression.__name__:{'vect__max_features':[32000],
+                                        LogisticRegression.__name__+'__C':[  .001, .01, .1, 1., 10., 100.], LogisticRegression.__name__+'__solver':['lbfgs','sag', 'saga'],
                                        LogisticRegression.__name__+'__max_iter':[800]}
         }
 

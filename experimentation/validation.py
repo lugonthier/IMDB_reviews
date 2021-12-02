@@ -67,7 +67,7 @@ def main():
         exp = Experiment(experiment_id=experiment_id)
 
     text_prep = TextPreprocessor(stopwords=stopwords, normalization=normalization)
-    vect = Vectorizer(vectorizer=vectorizer)
+    vect = Vectorizer(vectorizer=vectorizer, max_features=32000)
 
     for key, model in all_models.items():
         pipe = Pipeline(steps=[('preprocessor',text_prep), ('vect', vect), ('model', model)])
