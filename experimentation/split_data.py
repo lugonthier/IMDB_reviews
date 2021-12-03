@@ -8,7 +8,6 @@ def generate_holdout(generate_kfold:bool=True, k=5):
     """Generate 3 datasets. The train set, the validation set and the test set.
     if generate_kflod == True, generate k fold based on the train set. Then we saved the indices into the train set. 
     
-
     Args:
         generate_kfold (bool, optional): to decide if we generate k folds. Defaults to True.
         k (int, optional): number of fold. Defaults to 5.

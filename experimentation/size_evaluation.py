@@ -17,7 +17,10 @@ from experiment.experiment_type import dimensionality_size_evaluation, training_
 from model.base_model import get_model_by_name, get_model_name_by_id
 
 def main():
-
+    """
+    This script is used to perform model evaluation over dimensions size or training set size.
+    See below to choose model, preprocessing configuration and evaluation configuration.
+    """
     if len(sys.argv) < 10:
         usage = "\n Usage: python experimentation/size_evaluation.py  mode  stopwords  normalization vectorizer new_experiment  experiment_name/experiment_id  evaluation range_step\
         \n\n\t mode : 1 => simple experiment, 2 => cross validation\
@@ -28,8 +31,8 @@ def main():
         \n\t vectorizer : 1 => CountVectorizer, 2 => TfidfVectorizer\
         \n\t model_id : 1 => LogisticRegression, 2 => DecisionTree, 3 => MultinomialNB, 4 => RandomForest, 5 => LinearSVC, 6 => Multi Layer Perceptron, else => All models \
         \n\t new_experiment : 0 => experiment exist, 1: new experiment\
-        \n\t experiment_name (if new_experiment==1)\
         \n\t experiment_id (if new_experiment==0)\
+        \n\t experiment_name (if new_experiment==1)\
         \n\t evaluation : 1 => training size, 2 => dimensionality size\
         \n\t range_step integer : step to increase the size. for example 1000. then if max size is 12000 => range(1000, 12000, 1000)\
         "
@@ -52,19 +55,18 @@ def main():
     evaluation = int(sys.argv[8])
     range_step = int(sys.argv[9])
 
+    #Get model name(s) by id selected.
     model_names = get_model_name_by_id(model_id)
 
+    #Get model(s) by name.
     all_models = get_model_by_name(model_names)
 
+    #Load training set.
     df_train = pd.read_csv('data/IMDB_train.csv')
-    
-
     X_train = df_train.review.to_numpy()
     y_train = df_train.sentiment.apply(lambda x: 0 if x=="negative" else 1).to_numpy()
 
-    
-
-    
+    #Get folders index to perform cross validation.
     train = []
     test = []
     for column in df_train.columns:
