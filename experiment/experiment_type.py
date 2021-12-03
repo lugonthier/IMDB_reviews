@@ -21,7 +21,7 @@ def launch_experiment(exp:Experiment, mode:int, test:bool=False) -> None:
     if mode == 1:
 
            
-            exp.run_simple_experimentation( prefix,  metrics)
+            exp.run_simple_experimentation(prefix,  metrics)
 
     elif mode == 2:
 
@@ -77,6 +77,7 @@ def dimensionality_size_evaluation(exp:Experiment,  mode:int, range_step:int, ma
         mode (int): 1 => simple validation, 2 => cross validation.
         range_step (int): step to increase number of dimension.
         max_dim (int, optional): maximum dimension wanted (or possible). Defaults to 102000.
+        linear (bool, optional) : True => The dimension grows linearly, False => The dimension size grows geometrically with a coefficient of 2.
     """
     if linear:
         for dim in range(range_step, max_dim, range_step):

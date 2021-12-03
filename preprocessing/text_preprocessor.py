@@ -66,7 +66,6 @@ class TextPreprocessor(BaseEstimator):
         vect_punctuation = np.vectorize(self.remove_punctuation)
         X_transformed = vect_punctuation(X)
         
-        #vect_special_str = np.vectorize(self.remove_special_str)
         vect_token = np.vectorize(self.tokenize)
         X_transformed = vect_token(X_transformed)
         
