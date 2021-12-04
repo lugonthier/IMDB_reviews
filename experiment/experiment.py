@@ -80,8 +80,7 @@ class Experiment:
 
                 training_time0 = time()
                 unique, counts = np.unique(self.y_train[self.train_indexes[fold_index]], return_counts=True)
-                print('cross validation iteration ' + fold_index + ' : ', dict(zip(unique, counts)))
-                print('-'*20)
+
                 self.model.fit(self.X_train[self.train_indexes[fold_index]], self.y_train[self.train_indexes[fold_index]])
                 training_time1 = time()
                 y_pred_train = self.model.predict(self.X_train[self.train_indexes[fold_index]])
