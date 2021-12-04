@@ -1,0 +1,7 @@
+,model,accuracy,TN,FP,FN,TP
+0,LogisticRegression,0.8839,4300,661,500,4539
+1,DecisionTreeClassifier,0.747,3289,1672,858,4181
+2,MultinomialNB,0.8634,4323,638,728,4311
+3,RandomForestClassifier,0.8423,4035,926,651,4388
+4,LinearSVC,0.8903,4339,622,475,4564
+5,MLPClassifier,0.8724,4309,652,624,4415
