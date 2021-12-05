@@ -76,8 +76,9 @@ class Experiment:
 
             fit_time = []
             predict_time = []
+            
             for fold_index in range(len(self.train_indexes)):
-
+                print(f"start of the {fold_index+1} iteration out of {len(self.train_indexes)}\n")
                 training_time0 = time()
                 unique, counts = np.unique(self.y_train[self.train_indexes[fold_index]], return_counts=True)
 
