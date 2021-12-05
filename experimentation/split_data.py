@@ -30,7 +30,7 @@ def K_fold(df, k:int):
     """fold generation using stratified kfold to balance each fold.
 
     Args:
-        df ([type]): dataframe
+        df ([pd.DataFrame]): dataframe
         k (int): number of folder
 
     Returns:

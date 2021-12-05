@@ -25,7 +25,7 @@ def main():
     for name in all_names:
         all_models.append(get_model_by_name(name)[name])
 
-    # best features we found with hyperparameter search
+    #best dimensions found for each model
     max_features = [4000, 32000, None, 32000, 8000, 2000]
 
     x_train = train.review.to_numpy()
@@ -40,8 +40,8 @@ def main():
     fn_list = []
     tp_list = []
     for i in range(len(all_models)):
-        text_prep = TextPreprocessor(stopwords='english', normalization=2)  # stop words + PorterStemmer
-        vectorizer = Vectorizer(2, max_features=max_features[i])
+        text_prep = TextPreprocessor(stopwords='english', normalization=2)  # remove stop words + PorterStemmer
+        vectorizer = Vectorizer(2, max_features=max_features[i]) #TF-IDF Vectorizer
 
         pipe = Pipeline([('preprocessor', text_prep), ('vect', vectorizer), (all_names[i], all_models[i])])
         pipe.fit(x_train, y_train)

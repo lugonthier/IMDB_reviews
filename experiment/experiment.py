@@ -129,18 +129,6 @@ class Experiment:
             
             mlflow.log_param("training size", len(self.X_train))
             mlflow.sklearn.eval_and_log_metrics(self.model, self.X_test, self.y_test, prefix=prefix)   
-            #for key, metric in metrics.items():  
-            #    mlflow.log_metric(key, metric(y_pred, y_test))
-        
-
-    def __save_params(self):
-        pipeline_params = {} 
-        for step in self.model:
-            pipeline_params[type(step).__name__] = step.get_params(deep=False)
-
-        for step, params in pipeline_params.items():
-            for param, value in params.items():
-                mlflow.log_param(step+'__'+param, value)
-
+   
                 
         
