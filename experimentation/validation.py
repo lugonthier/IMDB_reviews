@@ -19,8 +19,7 @@ from model.base_model import get_model_by_name, get_model_name_by_id
 
 def main():
     if len(sys.argv) < 9:
-        usage = "\n Usage: python experimentation/validation.py  mode stopwords  normalization  vectorizer max_features ensembling  model_id  new_experiment  experiment_name/experiment_id\
-        \n\n\t mode : 1 => simple experiment, 2 => cross validation\
+        usage = "\n Usage: python experimentation/validation.py stopwords  normalization  vectorizer max_features ensembling  model_id  new_experiment  experiment_name/experiment_id\
         \n\t stopwords : 0 => No, 1 => 'english' from nltk\
          \n\t normalization : 0 => No, 1 => WordNetLemmatizer, 2 => PorterStemmer \
         \n\t vectorizer : 1 => CountVectorizer, 2 => TfidfVectorizer\
@@ -34,14 +33,14 @@ def main():
         print(usage)
         return
 
-    mode = int(sys.argv[1])
-    stopwords = [] if int(sys.argv[2]) == 0 else 'english'
-    normalization = int(sys.argv[3])
-    vectorizer = int(sys.argv[4])
-    max_features = int(sys.argv[5])
-    ensembling = int(sys.argv[6])
-    model_id = int(sys.argv[7])
-    new_experiment = int(sys.argv[8])
+    
+    stopwords = [] if int(sys.argv[1]) == 0 else 'english'
+    normalization = int(sys.argv[2])
+    vectorizer = int(sys.argv[3])
+    max_features = int(sys.argv[4])
+    ensembling = int(sys.argv[5])
+    model_id = int(sys.argv[6])
+    new_experiment = int(sys.argv[7])
 
     if (ensembling == 1):
         ensembling_model = Ensembling()
@@ -54,9 +53,9 @@ def main():
         all_models = get_model_by_name(model_names)
 
     if(new_experiment == 1):
-        experiment_name = str(sys.argv[9])
+        experiment_name = str(sys.argv[8])
     else:
-        experiment_id = int(sys.argv[9])
+        experiment_id = int(sys.argv[8])
 
     #Load training set.
     df_train = pd.read_csv('data/IMDB_train.csv')    
@@ -78,16 +77,16 @@ def main():
         pipe = Pipeline(steps=[('preprocessor',text_prep), ('vect', vect), ('model', model)])
         exp.model = pipe
 
-        if mode == 2:
-            train = []
-            test = []
-            for column in df_train.columns:
-                if 'fold' in column:
-                    train.append(df_train[df_train[column]=='train'].index)
-                    test.append(df_train[df_train[column]=='test'].index)
+        
+        train = []
+        test = []
+        for column in df_train.columns:
+            if 'fold' in column:
+                train.append(df_train[df_train[column]=='train'].index)
+                test.append(df_train[df_train[column]=='test'].index)
 
         exp.load_data(X_train, y_train,  train, test)
-        launch_experiment(exp, mode)
+        launch_experiment(exp)
         
 
 

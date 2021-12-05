@@ -12,13 +12,14 @@ Note that for the **simple validation**, **cross validation** and **size evaluat
  - in the ``mlruns`` folder. (brut results).
  - launch the command line ``mlflowui`` in the directory above mlruns in a terminal, then go to ``localhost:5000``.
 
-## simple validation
+
+## Cross validation
 This script can be found to [validation.py](experimentation/validation.py).
-To perform a simple validation. This means that the models will be trained on a **single** training set and evaluated on a **single** validation set.
+To perform a (stratified) cross validation. 
 
-This feature is executed by launching the command:
+```python experimentation/validation.py {stopwords} {normalization} {vectorizer} {max_features} {ensembling} {model_id} {new_experiment} {experiment}```
 
-```python experimentation/validation.py 1 {stopwords} {normalization} {vectorizer} {model_id} {new_experiment} {experiment}```
+For example, ``python experimentation/validation.py 1 2 2 3000 0 1 1 LogisticRegressionTest``
 
 where :
 - stopwords : 
@@ -33,6 +34,13 @@ where :
 - vectorizer :
     - **1** : To use a count vectorizer.
     - **2** : To use a tfidf vectorizer.
+
+- max_features :
+    - an integer to decide the maximum features (dimensionality of the data).
+
+- ensembling :
+    - **0** To use classic models (no ensemble).
+    - **1** To use the ensembling models.
 
 - model_id :
     - **1** : To use Logistic Regresstion.
@@ -52,19 +60,10 @@ where :
     - **ID** (integer) of the experiment (if new_experiment = 0).
     - **name** (string) to name the new experiment (if new_experiment = 1).
 
-## Cross validation
-This script can be found to [validation.py](experimentation/validation.py).
-To perform a (stratified) cross validation. 
-
-This feature is executed by launching the same script. The commands are almost the same but the first argument is 2 instead of 1 and there is two more arguments **max_features** (maximum features selected) and **ensembling** (0 to not use ensembling model, 1 to use ensembling model).
-
-```python experimentation/validation.py 2 {stopwords} {normalization} {vectorizer} {max_features} {ensembling} {model_id} {new_experiment} {experiment}```
-
-For example, ``python experimentation/validation.py 2 1 2 2 3000 0 1 1 LogisticRegressionTest``
-
 Note that in order to compare all model on the exact same data :
 -  You can run all model at once (model_id = 7)
 - Or you can execute the command for each model but make sure to not modified or re-split the data ([split_data.py](experimentation/split_data.py)).
+
 
 ## Fine tuning
 

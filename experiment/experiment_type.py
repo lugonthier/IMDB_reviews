@@ -5,7 +5,7 @@ from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 
 
 
-def launch_experiment(exp:Experiment, mode:int, test:bool=False) -> None:
+def launch_experiment(exp:Experiment, mode:int=2, test:bool=False) -> None:
     """This function help launching experiment (validation or cross validation).
 
     Args:
