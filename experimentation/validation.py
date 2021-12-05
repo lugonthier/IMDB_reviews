@@ -19,7 +19,7 @@ from model.base_model import get_model_by_name, get_model_name_by_id
 
 def main():
     if len(sys.argv) < 9:
-        usage = "\n Usage: python experimentation/validation.py  mode stopwords  normalization  vectorizer max_features  model_id  new_experiment  experiment_name/experiment_id\
+        usage = "\n Usage: python experimentation/validation.py  mode stopwords  normalization  vectorizer max_features ensembling  model_id  new_experiment  experiment_name/experiment_id\
         \n\n\t mode : 1 => simple experiment, 2 => cross validation\
         \n\t stopwords : 0 => No, 1 => 'english' from nltk\
          \n\t normalization : 0 => No, 1 => WordNetLemmatizer, 2 => PorterStemmer \

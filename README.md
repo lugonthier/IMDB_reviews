@@ -5,21 +5,20 @@ Sentiment analysis of 50K movie reviews from [IMDb](https://www.imdb.com).
 This project was done as a part of the [IFT712 - Technique d'apprentissage](https://www.usherbrooke.ca/admission/fiches-cours/IFT712?fp=005) at Sherbrooke University.
 
 # Features
-//expliquer data
 
 the tracking of model results is based on the open source project [mlflow](https://mlflow.org).
 
 Note that for the **simple validation**, **cross validation** and **size evaluation** features, you can found the results :
  - in the ``mlruns`` folder. (brut results).
- - Or you can go to ``localhost:5000`` after launching **mlflowui** command line in the directory above mlruns.
+ - launch the command line ``mlflowui`` in the directory above mlruns in a terminal, then go to ``localhost:5000``.
 
 ## simple validation
-
+This script can be found to [validation.py](experimentation/validation.py).
 To perform a simple validation. This means that the models will be trained on a **single** training set and evaluated on a **single** validation set.
 
 This feature is executed by launching the command:
 
-``python experimentation/validation.py 1 {stopwords} {normalization} {vectorizer} {model_id} {new_experiment} {experiment}``
+```python experimentation/validation.py 1 {stopwords} {normalization} {vectorizer} {model_id} {new_experiment} {experiment}```
 
 where :
 - stopwords : 
@@ -54,12 +53,14 @@ where :
     - **name** (string) to name the new experiment (if new_experiment = 1).
 
 ## Cross validation
-
+This script can be found to [validation.py](experimentation/validation.py).
 To perform a (stratified) cross validation. 
 
-This feature is executed by launching the exact same command but the first argument is 2 instead of 1:
+This feature is executed by launching the same script. The commands are almost the same but the first argument is 2 instead of 1 and there is two more arguments **max_features** (maximum features selected) and **ensembling** (0 to not use ensembling model, 1 to use ensembling model).
 
-``python experimentation/validation.py 2 {stopwords} {normalization} {vectorizer} {model_id} {new_experiment} {experiment}``
+```python experimentation/validation.py 2 {stopwords} {normalization} {vectorizer} {max_features} {ensembling} {model_id} {new_experiment} {experiment}```
+
+For example, ``python experimentation/validation.py 2 1 2 2 3000 0 1 1 LogisticRegressionTest``
 
 Note that in order to compare all model on the exact same data :
 -  You can run all model at once (model_id = 7)
@@ -100,7 +101,4 @@ This feature is executed by launching the command:
     - an integer, the step to increase the size. for example if 1000 and if max size is 12000. a cross validation will be perform with a size (training or dimemnsionality size) from 1000 to 12000 with a step of 1000.
 
 
-
-
-# Results Analysis
 
