@@ -9,8 +9,10 @@ This project was done as a part of the [IFT712 - Technique d'apprentissage](http
 the tracking of model results is based on the open source project [mlflow](https://mlflow.org).
 
 Note that for the **simple validation**, **cross validation** and **size evaluation** features, you can found the results :
- - in the ``mlruns`` folder. (brut results).
- - launch the command line ``mlflowui`` in the directory above mlruns in a terminal, then go to ``localhost:5000``.
+ - launch the command line ``mlflow ui`` in the project directory (IMDB_reviews) in a terminal.
+ - then go to ``http://localhost:5000`` in a browser, so make sure to not have something running on port 5000.
+ - Then you can launch the following scripts below in an other terminal, you will see the results in real time in the ``http://localhost:5000`` URI.
+ - If you can't do it, please refer to the MLflow at the [**Viewing the Tracking UI**](https://www.mlflow.org/docs/latest/quickstart.html).
 
 
 ## Cross validation
@@ -84,11 +86,11 @@ All the fine tuning results will be save to ``result_analysis/results/hyperparam
 
 ## Size evaluation
 
-To evaluate how the model performs depending of the **training size** or the **number of dimension**. Only available with cross validation for now.
+To evaluate how the model performs depending of the **training size** or the **number of dimension**. 
 
 This feature is executed by launching the command:
 
- ``python experimentation/size_evaluation.py 2 stopwords normalization vectorizer new_experiment  experiment  evaluation range_step``
+ ``python experimentation/size_evaluation.py stopwords normalization vectorizer new_experiment  experiment  evaluation range_step``
 
  where :
  - stopwords, normalization, vectorizer, new_experiment and  experiment are the same as the **simple validation** and **cross validation** features.

@@ -21,14 +21,14 @@ def launch_experiment(exp:Experiment, mode:int=2, test:bool=False) -> None:
     if mode == 1:
 
            
-            exp.run_simple_experimentation(prefix,  metrics)
+        exp.run_simple_experimentation(prefix,  metrics)
 
     elif mode == 2:
 
         exp.run_cross_valid_experimentation(metrics, prefix)
 
 
-def training_size_evaluation(exp:Experiment, mode:int, range_step:int) -> None:
+def training_size_evaluation(exp:Experiment, range_step:int) -> None:
     """Function that evaluate models according to the number of training sample.
         Because k folds are already made based on the real train set size, this function take a
         subset of the train set (at each iteration until we use the maximum size). 
@@ -65,12 +65,12 @@ def training_size_evaluation(exp:Experiment, mode:int, range_step:int) -> None:
             exp.train_indexes = np.array( [ train_indexes[index][indices_of_indexes[index]] for index in range(len(train_indexes))],dtype='int32')
 
 
-        launch_experiment(exp, mode)
+        launch_experiment(exp)
 
     
  
 
-def dimensionality_size_evaluation(exp:Experiment,  mode:int, range_step:int, max_dim:int = 102000, linear=False) -> None:#After investigation, maximum possible dimension is 101895
+def dimensionality_size_evaluation(exp:Experiment, range_step:int, max_dim:int = 102000, linear=False) -> None:#After investigation, maximum possible dimension is 101895
     """Function that evaluate models according to the number of dimensions. 
     Args:
         exp (Experiment): An Experiment object already initialized with its pipeline and data.
@@ -83,12 +83,12 @@ def dimensionality_size_evaluation(exp:Experiment,  mode:int, range_step:int, ma
         for dim in range(range_step, max_dim, range_step):
 
             exp.model[1].update_params(max_features=dim)
-            launch_experiment(exp, mode)
+            launch_experiment(exp)
     else:
         dim = range_step
         while dim < max_dim:
             exp.model[1].update_params(max_features=dim)
-            launch_experiment(exp, mode)
+            launch_experiment(exp)
 
             dim = 2*dim
 
