@@ -70,7 +70,12 @@ class Ensembling(BaseEstimator):
         print("You choose model ensembling, select an ensembling method : ")
         print("1 =>Adaboost, 2 => VotingClassifier")
 
-        ensembling_model = int(input())
+        while True:
+            ensembling_model = int(input())
+            if ensembling_model == 2 or ensembling_model == 1:
+                break
+            else:
+                print("Please choose a valid ensembling method")
 
         print("Please choose models to combine : ")
         print("0 => stop, 1 => LogisticRegression, 2 => DecisionTree, 3 => MultinomialNB, 4 => RandomForest,"
@@ -85,8 +90,6 @@ class Ensembling(BaseEstimator):
                         ensembling_array = np.array(ensembling_array)
                         break
                 else:
-                    """if (model_id_input in ensembling_array):
-                        print("Model is already choosen")"""
                     if ensembling_model == 1:
                         ensembling_array.append(model_id_input)
                         print("Model successfully added")
