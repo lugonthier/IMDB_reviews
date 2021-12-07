@@ -22,8 +22,7 @@ def main():
     See below to choose model, preprocessing configuration and evaluation configuration.
     """
     if len(sys.argv) < 10:
-        usage = "\n Usage: python experimentation/size_evaluation.py  mode  stopwords  normalization vectorizer new_experiment  experiment_name/experiment_id  evaluation range_step\
-        \n\n\t mode : 1 => simple experiment, 2 => cross validation\
+        usage = "\n Usage: python experimentation/size_evaluation.py  stopwords  normalization vectorizer new_experiment  experiment_name/experiment_id  evaluation range_step\
         \
         \n\t stopwords : 0 => No, 1 => 'english' from nltk\
          \n\t normalization : 0 => No, 1 => WordNetLemmatizer, 2 => PorterStemmer \
@@ -39,7 +38,7 @@ def main():
         print(usage)
         return
 
-    mode = int(sys.argv[1])
+
     stopwords = [] if int(sys.argv[2]) == 0 else 'english'
     normalization = int(sys.argv[3])
 
@@ -89,9 +88,9 @@ def main():
         exp.model = pipe
 
         if evaluation == 1:
-            training_size_evaluation(exp, mode, range_step)
+            training_size_evaluation(exp, range_step)
         elif evaluation == 2:
-            dimensionality_size_evaluation(exp, mode, range_step)
+            dimensionality_size_evaluation(exp, range_step)
 
 
 if __name__ == "__main__":
