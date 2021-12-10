@@ -35,7 +35,7 @@ def get_model_by_name(name:str) -> Dict:
         Dict: return a dict with the name in key and model in value. If the name is not in keys, all models are return.
     """
     models = {LogisticRegression.__name__:LogisticRegression(max_iter=800, C=1, solver='sag'), DecisionTreeClassifier.__name__:DecisionTreeClassifier(criterion='gini', max_depth=14, max_features=None, splitter='best'),
-     MultinomialNB.__name__:MultinomialNB(alpha=0.75, fit_prior=False), RandomForestClassifier.__name__:RandomForestClassifier(criterion='gini', max_depth=14, n_estimators=350, max_features='sqrt'),  LinearSVC.__name__:LinearSVC(max_iter=6000, C=1, loss='hinge'), MLPClassifier.__name__:MLPClassifier(alpha=0.001, hidden_layer_sizes=(50, 100, 200, 100, 50), learning_rate='adaptive', solver='lbfgs', max_iter=1000)}
+     MultinomialNB.__name__:MultinomialNB(alpha=0.75, fit_prior=False), RandomForestClassifier.__name__:RandomForestClassifier(criterion='gini', max_depth=14, n_estimators=350, max_features='sqrt'),  LinearSVC.__name__:LinearSVC(max_iter=6000, C=1, loss='hinge'), MLPClassifier.__name__:MLPClassifier(alpha=0.001, hidden_layer_sizes=(50, 100, 200, 100, 50), learning_rate='adaptive', solver='lbfgs', max_iter=2000)}
 
     if name in models.keys():
         single_model = {name: models[name]}

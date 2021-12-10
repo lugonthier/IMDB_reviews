@@ -50,7 +50,7 @@ def main():
 
         print(all_names[i])
         print('accuracy score : ', accuracy_score(y_test, y_pred))
-        print('confusion matrix', confusion_matrix(y_test, y_pred))
+        print('confusion matrix : ', confusion_matrix(y_test, y_pred))
         print('-' * 20)
 
         list_accuracy.append(accuracy_score(y_test, y_pred))
@@ -61,7 +61,7 @@ def main():
 
     dict_res = {'model': all_names, 'accuracy': list_accuracy, 'TN': tn_list, 'FP': fp_list, 'FN': fn_list, 'TP': tp_list}
     results = pd.DataFrame(dict_res)
-    # noinspection PyTypeChecker
+    
     results.to_csv('result_analysis/results/final_test/data_results/testing_results.csv')
 
 

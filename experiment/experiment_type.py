@@ -64,7 +64,7 @@ def training_size_evaluation(exp:Experiment, range_step:int) -> None:
             #Then we select the indexes based on the previous indices generated.
             exp.train_indexes = np.array( [ train_indexes[index][indices_of_indexes[index]] for index in range(len(train_indexes))],dtype='int32')
 
-
+        print(f'experimentation with training size of {str(size)}')
         launch_experiment(exp)
 
     

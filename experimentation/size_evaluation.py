@@ -14,14 +14,14 @@ from preprocessing.text_preprocessor import TextPreprocessor
 from preprocessing.vectorizer import Vectorizer
 from experiment.experiment import Experiment
 from experiment.experiment_type import dimensionality_size_evaluation, training_size_evaluation
-from model.base_model import get_model_by_name, get_model_name_by_id
+from model.base_model import get_model_by_name, get_model_name_by_id, get_params_model_by_name
 
 def main():
     """
     This script is used to perform model evaluation over dimensions size or training set size.
     See below to choose model, preprocessing configuration and evaluation configuration.
     """
-    if len(sys.argv) < 10:
+    if len(sys.argv) < 9:
         usage = "\n Usage: python experimentation/size_evaluation.py  stopwords  normalization vectorizer new_experiment  experiment_name/experiment_id  evaluation range_step\
         \
         \n\t stopwords : 0 => No, 1 => 'english' from nltk\
@@ -39,20 +39,20 @@ def main():
         return
 
 
-    stopwords = [] if int(sys.argv[2]) == 0 else 'english'
-    normalization = int(sys.argv[3])
+    stopwords = [] if int(sys.argv[1]) == 0 else 'english'
+    normalization = int(sys.argv[2])
 
-    vectorizer = int(sys.argv[4])
-    model_id = int(sys.argv[5])
-    new_experiment = int(sys.argv[6])
+    vectorizer = int(sys.argv[3])
+    model_id = int(sys.argv[4])
+    new_experiment = int(sys.argv[5])
 
     if(new_experiment == 1):
-        experiment_name = str(sys.argv[7])
+        experiment_name = str(sys.argv[6])
     else:
-        experiment_id = int(sys.argv[7])
+        experiment_id = int(sys.argv[6])
 
-    evaluation = int(sys.argv[8])
-    range_step = int(sys.argv[9])
+    evaluation = int(sys.argv[7])
+    range_step = int(sys.argv[8])
 
     #Get model name(s) by id selected.
     model_names = get_model_name_by_id(model_id)
@@ -84,10 +84,12 @@ def main():
     exp.load_data(X_train, y_train, train, test)
 
     for key, model in all_models.items():
+        print(f'\nExperimentation with {key} model\n')
         pipe = Pipeline(steps=[('preprocessor',text_prep), ('vect', vect), ('model', model)])
         exp.model = pipe
 
         if evaluation == 1:
+            pipe[1].max_features = get_params_model_by_name(key)[key]['vect__max_features'][0]
             training_size_evaluation(exp, range_step)
         elif evaluation == 2:
             dimensionality_size_evaluation(exp, range_step)

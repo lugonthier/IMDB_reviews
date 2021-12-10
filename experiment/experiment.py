@@ -96,7 +96,10 @@ class Experiment:
                 for metric_name, metric in metrics.items():
                     scores['train_'+metric_name].append(metric(y_pred_train, self.y_train[self.train_indexes[fold_index]]))
                     scores[prefix+metric_name].append(metric(y_pred_test, self.y_train[self.test_indexes[fold_index]]))
-            
+                    
+                print(f"train accuracy of iteration {fold_index+1} : {str(scores['train_accuracy_score'][fold_index]*100)}%\n")
+                print(f"{prefix[:-1]} accuracy of the iteration {fold_index+1} : {str(scores[prefix+'accuracy_score'][fold_index]*100)}%\n")
+
             scores['fit_time'] = fit_time
             scores['predict_time'] = predict_time
             
