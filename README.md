@@ -4,15 +4,22 @@ Sentiment analysis of 50K movie reviews from [IMDb](https://www.imdb.com).
 
 This project was done as a part of the [IFT712 - Technique d'apprentissage](https://www.usherbrooke.ca/admission/fiches-cours/IFT712?fp=005) at Sherbrooke University.
 
+projet members :
+ - Lucas Gonthier
+    - lugonthier (github account)
+    - gonl3002 (gitlab account)
+- Adrien Ingarao
+    - inga2603 (gitlab account)
+
 # Features
 
 the tracking of model results is based on the open source project [mlflow](https://mlflow.org).
 
-Note that for the **simple validation**, **cross validation** and **size evaluation** features, you can found the results :
+Note that for the **cross validation** and **size evaluation** features, you can found the results :
  - launch the command line ``mlflow ui`` in the project directory (IMDB_reviews) in a terminal.
  - then go to ``http://localhost:5000`` in a browser, so make sure to not have something running on port 5000.
  - Then you can launch the following scripts below in an other terminal, you will see the results in real time in the ``http://localhost:5000`` URI.
- - If you can't do it, please refer to the MLflow at the [**Viewing the Tracking UI**](https://www.mlflow.org/docs/latest/quickstart.html).
+ - If you can't do it, please refer to the MLflow documentation at the [**Viewing the Tracking UI**](https://www.mlflow.org/docs/latest/quickstart.html) section.
 
 
 ## Cross validation
@@ -73,9 +80,18 @@ To perform a research of the best hyperparameters for a model.
 
 This feature is executed by launching the command:
 
-``python experimentation/hyperparameter_search.py {vectorizer} {model_selected}``
+``python experimentation/hyperparameter_search.py {stopwords} {normalization} {vectorizer} {model_selected}``
 
 where :
+- stopwords : 
+    - **0** :  To not remove the stop words.
+    - "**english**" : To remove english stop words. nltk stop words will be used.
+
+- normalization :
+    - **0** : To not perform normalization.
+    - **1** : To perform lemmatizing. The **WordNetLemmatizer** from nltk will be used.
+    - **2** : To perform stemming. The **PorterStemmer** from nltk will be used.
+
 - vectorizer :
     - **1** : To use count vectorizer.
     - **2** : To use a tfidf vectorizer.
@@ -90,7 +106,7 @@ To evaluate how the model performs depending of the **training size** or the **n
 
 This feature is executed by launching the command:
 
- ``python experimentation/size_evaluation.py stopwords normalization vectorizer new_experiment  experiment  evaluation range_step``
+ ``python experimentation/size_evaluation.py {stopwords} {normalization} {vectorizer} {new_experiment}  {experiment}  {evaluation} {range_step}``
 
  where :
  - stopwords, normalization, vectorizer, new_experiment and  experiment are the same as the **simple validation** and **cross validation** features.
