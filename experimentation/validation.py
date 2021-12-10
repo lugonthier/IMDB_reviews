@@ -72,7 +72,7 @@ def main():
 
     #For each model selected. (one model or all)
     for key, model in all_models.items():
-
+        print(f"\nBegin experimentation with {key} model\n")
         #Create pipeline.
         pipe = Pipeline(steps=[('preprocessor',text_prep), ('vect', vect), ('model', model)])
         exp.model = pipe
@@ -87,7 +87,7 @@ def main():
 
         exp.load_data(X_train, y_train,  train, test)
         launch_experiment(exp)
-        
+        print('-'*20)
 
 
 if __name__ == "__main__":
